@@ -3,14 +3,14 @@
         <h1 style="text-align: center">Vue Grid Layout</h1>
         <!--<pre>{{ layout | json }}</pre>-->
         <div>
-            <div class="layoutJSON">
+            <!-- <div class="layoutJSON">
                 Displayed as <code>[x, y, w, h]</code>:
                 <div class="columns">
                     <div class="layoutItem" v-for="item in layout" :key="item.i">
                         <b>{{item.i}}</b>: [{{item.x}}, {{item.y}}, {{item.w}}, {{item.h}}]
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!--<div class="layoutJSON">
                 Displayed as <code>[x, y, w, h]</code>:
                 <div class="columns">
@@ -21,15 +21,15 @@
             </div>-->
         </div>
         <div id="content">
-            <button @click="decreaseWidth">Decrease Width</button>
+            <!-- <button @click="decreaseWidth">Decrease Width</button>
             <button @click="increaseWidth">Increase Width</button>
             <button @click="scaleHalf">Scale x0.5</button>
             <button @click="scaleThreeQuarters">Scale x0.75</button>
             <button @click="scaleIdentity">Scale x1.0</button>
             <button @click="addItem">Add an item</button>
-            <button @click="addItemDynamically">Add an item dynamically</button>
+            <button @click="addItemDynamically">Add an item dynamically</button> -->
             <!-- Add to show rtl support -->
-            <button @click="changeDirection">Change Direction</button>
+            <!-- <button @click="changeDirection">Change Direction</button>
             <input type="checkbox" v-model="draggable"/> Draggable
             <input type="checkbox" v-model="resizable"/> Resizable
             <input type="checkbox" v-model="mirrored"/> Mirrored
@@ -37,15 +37,17 @@
             <input type="checkbox" v-model="responsive"/> Responsive
             <input type="checkbox" v-model="preventCollision"/> Prevent Collision
             <input type="checkbox" v-model="compact"/> Vertical Compact
-            <div style="margin-top: 10px;margin-bottom: 10px;">
-                Row Height: <input type="number" v-model="rowHeight"/> Col nums: <input type="number" v-model="colNum"/>
-                Margin x: <input type="number" v-model="marginX"/> Margin y: <input type="number" v-model="marginY"/>
-            </div>
+            <div style="margin-top: 10px;margin-bottom: 10px;"> -->
+                <!-- Row Height: <input type="number" v-model="rowHeight"/> Col nums: <input type="number" v-model="colNum"/> -->
+                <!-- Margin x: <input type="number" v-model="marginX"/> Margin y: <input type="number" v-model="marginY"/> -->
+            <!-- </div> -->
             <grid-layout
                     id="grid-layout"
+                    class="grid"
+                    :style="`--cols: ${colNum}; --row-height: ${rowHeight};`"
                     :margin="[parseInt(marginX), parseInt(marginY)]"
                     :layout.sync="layout"
-                    :col-num="parseInt(colNum)"
+                    :col-num="colNum"
                     :row-height="rowHeight"
                     :is-draggable="draggable"
                     :is-resizable="resizable"
@@ -84,9 +86,10 @@
                            @container-resized="containerResized"
                            @moved="moved"
                 >
-                    <!--<custom-drag-element :text="item.i"></custom-drag-element>-->
-                    <test-element :text="item.i" @removeItem="removeItem($event)"></test-element>
-                    <!--<button @click="clicked">CLICK ME!</button>-->
+                    <span style="display: flex; margin: 20px">{{item.h}}</span>
+                    <!-- <custom-drag-element :text="item.i"></custom-drag-element> -->
+                    <!-- <test-element :text="item.i" @removeItem="removeItem($event)"></test-element> -->
+                    <!-- <button @click="clicked">CLICK ME!</button> -->
                 </grid-item>
             </grid-layout>
             <hr/>
@@ -125,37 +128,43 @@
     import CustomDragElement from './components/CustomDragElement.vue';
     import {getDocumentDir, setDocumentDir} from "./helpers/DOM";
     //var eventBus = require('./eventBus');
-
+    const g = (h) => Math.ceil(h/(17/6))
     let testLayout = [
-        {"x":0,"y":0,"w":2,"h":2,"i":"0", resizable: true, draggable: true, static: false, minY: 0, maxY: 2},
-        {"x":2,"y":0,"w":2,"h":4,"i":"1", resizable: null, draggable: null, static: true},
-        {"x":4,"y":0,"w":2,"h":5,"i":"2", resizable: false, draggable: false, static: false, minX: 4, maxX: 4, minW: 2, maxW: 2, preserveAspectRatio: true},
-        {"x":6,"y":0,"w":2,"h":3,"i":"3", resizable: false, draggable: false, static: false, preserveAspectRatio: true},
-        {"x":8,"y":0,"w":2,"h":3,"i":"4", resizable: false, draggable: false, static: false},
-        {"x":10,"y":0,"w":2,"h":3,"i":"5", resizable: false, draggable: false, static: false},
-        {"x":0,"y":5,"w":2,"h":5,"i":"6", resizable: false, draggable: false, static: false},
-        {"x":2,"y":5,"w":2,"h":5,"i":"7", resizable: false, draggable: false, static: false},
-        {"x":4,"y":5,"w":2,"h":5,"i":"8", resizable: false, draggable: false, static: false},
-        {"x":6,"y":3,"w":2,"h":4,"i":"9", resizable: false, draggable: false, static: true},
-        {"x":8,"y":4,"w":2,"h":4,"i":"10", resizable: false, draggable: false, static: false},
-        {"x":10,"y":4,"w":2,"h":4,"i":"11", resizable: false, draggable: false, static: false, minY: 4},
-        {"x":0,"y":10,"w":2,"h":5,"i":"12", resizable: false, draggable: false, static: false},
-        {"x":2,"y":10,"w":2,"h":5,"i":"13", resizable: false, draggable: false, static: false},
-        {"x":4,"y":8,"w":2,"h":4,"i":"14", resizable: false, draggable: false, static: false},
-        {"x":6,"y":8,"w":2,"h":4,"i":"15", resizable: false, draggable: false, static: false},
-        {"x":8,"y":10,"w":2,"h":5,"i":"16", resizable: false, draggable: false, static: false},
-        {"x":10,"y":4,"w":2,"h":2,"i":"17", resizable: false, draggable: false, static: false},
-        {"x":0,"y":9,"w":2,"h":3,"i":"18", resizable: false, draggable: false, static: false},
-        {"x":2,"y":6,"w":2,"h":2,"i":"19", resizable: false, draggable: false, static: false}
-    ];
-
-    /*let testLayout = [
-        { x: 0, y: 0, w: 2, h: 2, i: "0" },
-        { x: 2, y: 0, w: 2, h: 2, i: "1" },
-        { x: 4, y: 0, w: 2, h: 2, i: "2" },
-        { x: 6, y: 0, w: 2, h: 2, i: "3" },
-        { x: 8, y: 0, w: 2, h: 2, i: "4" },
-    ];*/
+    //   { x: 0, y: 10, w: 1, h: g(2.2) },
+    //   { x: 1, y: 10, w: 1, h: g(2.2) },
+    //   { x: 2, y: 10, w: 1, h: g(2.2) },
+    //   { x: 3, y: 10, w: 1, h: g(2.2) },
+    //   { x: 4, y: 10, w: 1, h: g(2.2) },
+    //   { x: 5, y: 10, w: 1, h: g(2.2) },
+    //   { x: 0, y: 15, w: 1, h: g(4) },
+    //   { x: 1, y: 15, w: 1, h: g(4) },
+    //   { x: 2, y: 15, w: 1, h: g(4) },
+    //   { x: 3, y: 15, w: 1, h: g(4) },
+    //   { x: 4, y: 15, w: 1, h: g(4) },
+    //   { x: 5, y: 15, w: 1, h: g(4) },
+      { x: 0, y: 20, w: 1, h: g(27.9) },
+      { x: 1, y: 20, w: 1, h: g(27.9) },
+      { x: 2, y: 20, w: 1, h: g(27.9) },
+      { x: 3, y: 20, w: 1, h: g(27.9) },
+      { x: 4, y: 20, w: 1, h: g(27.9) },
+      { x: 5, y: 20, w: 1, h: g(27.9) },
+      { x: 0, y: 40, w: 1, h: g(47.4) },
+      { x: 1, y: 40, w: 1, h: g(47.4) },
+      { x: 2, y: 40, w: 1, h: g(47.4) },
+      { x: 3, y: 40, w: 1, h: g(47.4) },
+      { x: 4, y: 40, w: 1, h: g(47.4) },
+      { x: 5, y: 40, w: 1, h: g(47.4) },
+      { x: 0, y: 60, w: 1, h: g(103) },
+      { x: 1, y: 60, w: 1, h: g(103) },
+      { x: 2, y: 60, w: 1, h: g(103) },
+      { x: 3, y: 60, w: 1, h: g(103) },
+      { x: 4, y: 60, w: 1, h: g(103) },
+      { x: 5, y: 60, w: 1, h: g(103) },
+    ]
+    testLayout = testLayout.map((item, index) => {
+      item.i = index.toString()
+      return item
+    })
 
     export default {
         name: 'app',
@@ -170,16 +179,16 @@
                 layout: JSON.parse(JSON.stringify(testLayout)),
                 layout2: JSON.parse(JSON.stringify(testLayout)),
                 draggable: true,
-                resizable: true,
+                resizable: false,
                 mirrored: false,
-                responsive: true,
+                responsive: false,
                 bounded: false,
                 transformScale: 1,
-                preventCollision: false,
-                compact: true,
+                preventCollision: true,
+                compact: false,
                 restoreOnDrag: true,
-                rowHeight: 30,
-                colNum: 12,
+                rowHeight: 17 / 6,
+                colNum: 0,
                 index: 0,
                 marginX: 10,
                 marginY: 10,
@@ -187,6 +196,7 @@
         },
         mounted: function () {
             this.index = this.layout.length;
+            this.$nextTick(() => this.colNum = 8)
         },
         methods: {
             clicked: function() {

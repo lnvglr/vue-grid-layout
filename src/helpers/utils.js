@@ -188,8 +188,33 @@ export function getFirstCollision(layout: Layout, layoutItem: LayoutItem): ?Layo
   }
 }
 
+export function collidingWithKnot(l1: LayoutItem, l2: LayoutItem): boolean {
+  const KNOT_SIZE = 2;
+  const {h: h1, y: y1, i: i1 } = l1;
+  const {h: h2, y: y2, i: i2 } = l2;
+  for (let i = -KNOT_SIZE; i <= KNOT_SIZE; i++) {
+    if (i === 0) continue;
+    if (((h2 > KNOT_SIZE && (y1 === y2 + i))
+      || (y1 + h1 === y2 + h2 + i)
+      || (h2 > KNOT_SIZE && (y1 === y2 + h2 + i))
+      || (y1 + h1 === y2 + i))
+      && i1 !== i2) {
+      return true;
+    }
+  }
+}
+
+export function knotCollisions(layout: Layout, layoutItem: LayoutItem): Array<LayoutItem> {
+  const itemColumn = layoutItem.x
+  const itemsInBorderingColumns = layout.filter(({x}) => x >= itemColumn - 1 && x <= itemColumn + 1)
+  return itemsInBorderingColumns.filter((item) => collidingWithKnot(item, layoutItem))
+}
+
 export function getAllCollisions(layout: Layout, layoutItem: LayoutItem): Array<LayoutItem> {
-  return layout.filter((l) => collides(l, layoutItem));
+  return [
+    ...knotCollisions(layout, layoutItem),
+    ...layout.filter((l) => collides(l, layoutItem))
+  ]
 }
 
 /**
