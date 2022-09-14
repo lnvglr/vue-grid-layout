@@ -32,25 +32,47 @@
 
 
 .vue-grid-layout {
+--bg: #fafafa;
   background: #f0f0f0;
   width: 1280px;
+  margin-inline: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 0 30px var(--bg);
 }
 .vue-grid-item {
     border-radius: 5px;
 }
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
-  box-shadow: 0 2px 2px rgba(0 0 0 / 0.1), 0 5px 10px rgba(0 0 0 / 0.1);
+  box-shadow:
+  0 2px 2px rgba(0 0 0 / 0.03),
+  0 5px 2px rgba(0 0 0 / 0.03),
+  2px 5px 2px rgba(0 0 0 / 0.03),
+  5px 10px 5px rgba(0 0 0 / 0.03),
+  7px 15px 7px rgba(0 0 0 / 0.03),
+  10px 20px 10px rgba(0 0 0 / 0.03),
+  15px 30px 10px rgba(0 0 0 / 0.03),
+  20px 40px 10px rgba(0 0 0 / 0.03)
+;
   transition: box-shadow 100ms;
 }
 .vue-grid-item:not(.vue-grid-placeholder):hover {
-    box-shadow: 0 2px 10px rgba(0 0 0 / 0.1), 0 10px 25px rgba(0 0 0 / 0.1);
+    box-shadow:
+      0 2px 2px rgba(0 0 0 / 0.03),
+      0 5px 2px rgba(0 0 0 / 0.03),
+      4px 10px 2px rgba(0 0 0 / 0.03),
+      10px 20px 5px rgba(0 0 0 / 0.03),
+      12px 25px 7px rgba(0 0 0 / 0.03),
+      15px 30px 10px rgba(0 0 0 / 0.03),
+      22px 45px 10px rgba(0 0 0 / 0.03),
+      30px 60px 10px rgba(0 0 0 / 0.03)
+  ;
     transition: box-shadow 100ms;
 }
 .vue-grid-item:not(.vue-grid-placeholder)::before,
 .vue-grid-item:not(.vue-grid-placeholder)::after {
     --size: 35;
-    content: "";
+    /* content: ""; */
     width: calc(var(--size) * 1px);
     height: calc(var(--size) * 1px);
     position: absolute;
@@ -100,28 +122,52 @@
   cursor: pointer;
 }
 .grid {
-    --line-height: 0.5px
+    background-color: var(--bg);
+    --line-height: 1px;
+    --cell-height: calc(var(--row-height, 20) * 4.53px);
+    --cell-width:  calc((100% - 5px) / (var(--cols) - 2));
+    z-index: 1;
+}
+.grid::before {
+    content: '';
+    background-size: calc((100% - 15px) / var(--cols) / 12) calc(var(--row-height, 20) * 4.53px);
+    background-image: radial-gradient(#ff5100 0.5px, transparent 1px);
+    /* background-image: radial-gradient(#444cf7 0.5px, transparent 1px); */
+    height: calc(100% - 5px);
+    width: calc(100% + 5px);
+    position: absolute;
+    background-repeat: repeat;
+    margin: -1px;
+    pointer-events: none;
 }
 .grid::after {
-    /* content: ''; */
-    background-size: calc(calc(100% - 5px) / var(--cols, 4)) calc(var(--row-height, 20) * 20 * 4.53px);
-    background-image: linear-gradient(to bottom, grey var(--line-height), transparent var(--line-height));
+    z-index: 1;
+    --cross: 5px;
+    pointer-events: none;
+    content: '';
+    background-size: var(--cell-width) var(--cell-height);
+    background-image:
+        linear-gradient(to right,#f0f0f0 0, #f0f0f0 2px, transparent 2px);
     height: calc(100% - 5px);
-    width: calc(100% - 5px);
+    width: calc(100% - ((100% / var(--cols)) * 1.986) - 5px);
     position: absolute;
     background-repeat: repeat;
     margin: 5px;
-    pointer-events: none;
+    margin-left: calc(var(--cell-width) - 49px)
 }
-.grid::before {
+/* .grid::after {
+    --cross: 5px;
     pointer-events: none;
     content: '';
-    background-size: calc(calc(100% - 5px) / var(--cols, 4)) calc(var(--row-height, 20) * 4.53px);
-    background-image: linear-gradient( to right, lightgrey var(--line-height), transparent var(--line-height)),
+    background-size: var(--cell-width) var(--cell-height);
+    background-image:
+        linear-gradient(to right, transparent var(--cross), var(--bg) var(--cross), var(--bg) calc(100% - var(--cross) + var(--line-height)), transparent calc(100% - var(--cross) + var(--line-height))),
+        linear-gradient(to bottom, transparent var(--cross), var(--bg) var(--cross), var(--bg) calc(var(--cell-height) - var(--cross)), transparent calc(var(--cell-height) - var(--cross))),
+        linear-gradient(to right, lightgrey var(--line-height), transparent var(--line-height)),
         linear-gradient(to bottom, lightgrey var(--line-height), transparent var(--line-height));
     height: calc(100% - 5px);
     width: calc(100% - 5px);
     position: absolute;
     background-repeat: repeat;
     margin: 5px;
-}
+} */
