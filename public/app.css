@@ -32,15 +32,20 @@
 
 
 .vue-grid-layout {
---bg: #fafafa;
+  --bg: #fafafa;
   background: #f0f0f0;
-  width: 1280px;
+  width: max(calc(var(--cols, 8) * 160px), 720px);
+  /* width: 1280px; */
   margin-inline: auto;
   border-radius: 10px;
   box-shadow: 0 0 0 30px var(--bg);
 }
 .vue-grid-item {
     border-radius: 5px;
+}
+.grid .vue-grid-item.vue-grid-placeholder {
+    background: #233F6E;
+    opacity: 0.5
 }
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
@@ -125,12 +130,12 @@
     background-color: var(--bg);
     --line-height: 1px;
     --cell-height: calc(var(--row-height, 20) * 4.53px);
-    --cell-width:  calc((100% - 5px) / (var(--cols) - 2));
+    --cell-width:  calc((100% - 15px) / var(--cols));
     z-index: 1;
 }
 .grid::before {
     content: '';
-    background-size: calc((100% - 15px) / var(--cols) / 12) calc(var(--row-height, 20) * 4.53px);
+    background-size: calc(var(--cell-width) / 12) calc(var(--row-height, 20) * 4.53px);
     background-image: radial-gradient(#ff5100 0.5px, transparent 1px);
     /* background-image: radial-gradient(#444cf7 0.5px, transparent 1px); */
     height: calc(100% - 5px);
@@ -146,15 +151,15 @@
     --cross: 5px;
     pointer-events: none;
     content: '';
-    background-size: var(--cell-width) var(--cell-height);
+    background-size: calc(var(--cell-width)) var(--cell-height);
     background-image:
         linear-gradient(to right,#f0f0f0 0, #f0f0f0 2px, transparent 2px);
     height: calc(100% - 5px);
-    width: calc(100% - ((100% / var(--cols)) * 1.986) - 5px);
+    width:calc(100% + 5px);
     position: absolute;
     background-repeat: repeat;
     margin: 5px;
-    margin-left: calc(var(--cell-width) - 49px)
+    /* margin-left: calc(var(--cell-width) - 49px) */
 }
 /* .grid::after {
     --cross: 5px;
